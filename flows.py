@@ -5,14 +5,22 @@ from taskflow.patterns import linear_flow as lf
 
 
 class TestTask(task.Task):
-    def execute(self):
-        print("Executing %s" % self)
+    version = 2
+
+    def execute(self, timeout=5, app=None):
+        print("starting %s for app %s" % (self, app))
+        time = timeout
+        while time > 0:
+            sleep(1)
+            self.update_progress(1.0 - time/timeout)
+            time -= 1
+
+        print("Done %s" % self)
         return 'ok'
 
 
 class PrintTask(task.Task):
     def execute(self, msg):
-        raise RuntimeError("Oeps!")
         print("Printing message: %s" % msg)
 
 
